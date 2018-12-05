@@ -22,8 +22,8 @@ group :development, :test do
   gem 'listen'
   gem 'database_cleaner'
   gem 'warden'
-  gem 'factory_girl_rails', '~> 4.9.0'
-  gem 'factory_bot'
+  # gem 'factory_girl_rails', '~> 4.9.0'
+  gem 'factory_bot_rails'
 end
 
 group :development do

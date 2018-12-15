@@ -1,9 +1,11 @@
 require 'rails_helper'
 
 describe 'navigate' do
+  let(:user) { FactoryBot.create(:user) }
+  let(:post) { FactoryBot.create(:post, user: user, overtime_request: 3.5) }
+
   before do
-    @user = FactoryBot.create(:user)
-    login_as(@user, scope: :user)
+    login_as(user, scope: :user)
   end
 
   describe 'index' do
@@ -25,6 +27,20 @@ describe 'navigate' do
       visit posts_path
       expect(page).to have_content(/Rationale|Content/)
     end
+
+    it "has a scope so the only post creators can see their posts" do
+      other_user = FactoryBot.create(:non_authorized_user)
+      post1 = FactoryBot.create(:post, user: user)
+      post2 = FactoryBot.create(:second_post, user: user)
+      post_from_other_user = FactoryBot.create(
+        :post_from_other_user,
+        user: other_user
+      )
+
+      visit posts_path
+
+      expect(page).to_not have_content(/This should not be seen/)
+    end
   end
 
   describe 'new' do
@@ -38,10 +54,14 @@ describe 'navigate' do
 
   describe 'delete' do
     it 'can be deleted' do
-      post = FactoryBot.create(:post)
+      logout(:user)
+      delete_user = FactoryBot.create(:user)
+      login_as(delete_user, scope: :user)
+      post_to_delete = FactoryBot.create(:post, user: delete_user, overtime_request: 3.5)
+
       visit posts_path
 
-      click_link "delete_post_#{post.id}_from_index"
+      click_link "delete_post_#{post_to_delete.id}_from_index"
       expect(page.status_code).to eq(200)
     end
   end
@@ -58,14 +78,15 @@ describe 'navigate' do
     it "can be created from new form page" do
       fill_in 'post[date]', with: Date.today
       fill_in 'post[rationale]', with: "Some rationale"
-      click_on "Save"
+      fill_in 'post[overtime_request]', with: 4.5
 
-      expect(page).to have_content("Some rationale")
+      expect { click_on "Save" }.to change(Post, :count).by(1)
     end
 
     it 'will have a user associated' do
       fill_in 'post[date]', with: Date.today
       fill_in 'post[rationale]', with: "User_Association"
+      fill_in 'post[overtime_request]', with: 4.5
       click_on "Save"
 
       expect(User.last.posts.last.rationale).to eq("User_Association")
@@ -73,12 +94,8 @@ describe 'navigate' do
   end
 
   describe "edit" do
-    before do
-      @post = FactoryBot.create(:post, user: @user)
-    end
-
     it "can be edited" do
-      visit edit_post_path(@post)
+      visit edit_post_path(post)
 
       fill_in 'post[date]', with: Date.today
       fill_in 'post[rationale]', with: "Edited content"
@@ -92,7 +109,7 @@ describe 'navigate' do
       non_authorized_user = FactoryBot.create(:non_authorized_user)
       login_as(non_authorized_user, scope: :user)
 
-      visit edit_post_path(@post)
+      visit edit_post_path(post)
 
       expect(current_path).to eq(root_path)
     end

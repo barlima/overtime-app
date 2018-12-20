@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_15_123953) do
+ActiveRecord::Schema.define(version: 2018_12_19_180634) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "audit_logs", force: :cascade do |t|
+    t.bigint "user_id"
+    t.integer "status", default: 0
+    t.date "start_date"
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_audit_logs_on_user_id"
+  end
 
   create_table "posts", force: :cascade do |t|
     t.date "date"
@@ -37,9 +47,11 @@ ActiveRecord::Schema.define(version: 2018_12_15_123953) do
     t.string "type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "phone"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "audit_logs", "users"
   add_foreign_key "posts", "users"
 end

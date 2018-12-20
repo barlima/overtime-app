@@ -11,6 +11,7 @@ class UserDashboard < Administrate::BaseDashboard
     posts: Field::HasMany,
     id: Field::Number,
     email: Field::String.with_options(searchable: true),
+    phone: Field::String,
     password: Field::Password,
     first_name: Field::String,
     last_name: Field::String,
@@ -35,6 +36,7 @@ class UserDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = [
     :posts,
     :email,
+    :phone,
     :first_name,
     :last_name,
     :type,
@@ -50,6 +52,7 @@ class UserDashboard < Administrate::BaseDashboard
     :password,
     :first_name,
     :last_name,
+    :phone,
   ].freeze
 
   # Overwrite this method to customize how users are displayed

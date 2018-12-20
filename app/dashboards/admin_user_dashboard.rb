@@ -11,6 +11,7 @@ class AdminUserDashboard < Administrate::BaseDashboard
     posts: Field::HasMany,
     id: Field::Number,
     email: Field::String.with_options(searchable: true),
+    phone: Field::String,
     password: Field::String,
     first_name: Field::String,
     last_name: Field::String,
@@ -36,6 +37,7 @@ class AdminUserDashboard < Administrate::BaseDashboard
     :posts,
     :id,
     :email,
+    :phone,
     :first_name,
     :last_name,
     :type,
@@ -52,6 +54,7 @@ class AdminUserDashboard < Administrate::BaseDashboard
     :first_name,
     :last_name,
     :type,
+    :phone,
   ].freeze
 
   # Overwrite this method to customize how admin users are displayed

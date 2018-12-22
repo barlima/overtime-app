@@ -10,7 +10,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :audit_logs, except: %i(new edit destroy)
+  resources :audit_logs, except: %i(new edit destroy) do
+    member do
+      get :confirm
+    end
+  end
 
   namespace :admin do
     resources :users

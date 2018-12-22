@@ -1,10 +1,15 @@
 Rails.application.routes.draw do
-  
+
   root to: 'static#homepage'
 
   devise_for :users, skip: [:registrations]
 
-  resources :posts
+  resources :posts do
+    member do
+      get :approve
+    end
+  end
+
   resources :audit_logs, except: %i(new edit destroy)
 
   namespace :admin do

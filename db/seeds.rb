@@ -14,14 +14,14 @@ AdminUser.create(email: "admin@user.com",
 
 puts "1 user created"
 
-100.times do |post| 
-  Post.create!(date: Date.today, rationale: "#{post} rationale content", user_id: @user.id, overtime_request: 2.5)
-end
-
-puts "100 posts have been created"
-
 AuditLog.create!(user: @user, status: 0, start_date: (Date.today - 6.days))
 AuditLog.create!(user: @user, status: 0, start_date: (Date.today - 13.days))
 AuditLog.create!(user: @user, status: 0, start_date: (Date.today - 20.days))
 
 puts "3 audit_logs have been created"
+
+100.times do |post| 
+  Post.create!(date: Date.today, rationale: "#{post} rationale content", user_id: @user.id, overtime_request: 2.5)
+end
+
+puts "100 posts have been created"

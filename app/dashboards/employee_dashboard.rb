@@ -1,6 +1,6 @@
 require "administrate/base_dashboard"
 
-class AdminUserDashboard < Administrate::BaseDashboard
+class EmployeeDashboard < Administrate::BaseDashboard
   # ATTRIBUTE_TYPES
   # a hash that describes the type of each of the model's fields.
   #
@@ -62,10 +62,10 @@ class AdminUserDashboard < Administrate::BaseDashboard
     :phone,
   ].freeze
 
-  # Overwrite this method to customize how admin users are displayed
-  # across all pages of the admin dashboard.
+  # Overwrite this method to customize how employee users are displayed
+  # across all pages of the employee dashboard.
   #
-  # def display_resource(admin_user)
-  #   "AdminUser ##{admin_user.id}"
+  # def display_resource(employee_user)
+  #   "EmployeeUser ##{employee_user.id}"
   # end
 end

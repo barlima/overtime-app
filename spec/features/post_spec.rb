@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'navigate' do
   let(:user) { FactoryBot.create(:user) }
-  let(:post) { FactoryBot.create(:post, user: user, overtime_request: 3.5) }
+  let(:post) { FactoryBot.create(:post, user: user, daily_hours: 3.5) }
 
   before do
     login_as(user, scope: :user)
@@ -22,10 +22,12 @@ describe 'navigate' do
     end
 
     it "has a list of posts" do
-      post1 = FactoryBot.build_stubbed(:post)
-      post2 = FactoryBot.build_stubbed(:second_post)
+      post
+      second_post = FactoryBot.create(:second_post, user: user)
+
       visit posts_path
-      expect(page).to have_content(/Rationale|Content/)
+      expect(page).to have_text(post.work_performed)
+      expect(page).to have_text(second_post.work_performed)
     end
 
     it "has a scope so the only post creators can see their posts" do
@@ -45,6 +47,8 @@ describe 'navigate' do
 
   describe 'new' do
     it "has a link from the homepage" do
+      employee = Employee.create(email: "employee@example.com", password: 'asdfasdf', password_confirmation: 'asdfasdf', phone: '5555555555')
+      login_as(employee, scope: :user)
       visit root_path
 
       click_link "new_post_from_nav"
@@ -57,7 +61,7 @@ describe 'navigate' do
       logout(:user)
       delete_user = FactoryBot.create(:user)
       login_as(delete_user, scope: :user)
-      post_to_delete = FactoryBot.create(:post, user: delete_user, overtime_request: 3.5)
+      post_to_delete = FactoryBot.create(:post, user: delete_user, daily_hours: 3.5)
 
       visit posts_path
 
@@ -77,19 +81,19 @@ describe 'navigate' do
 
     it "can be created from new form page" do
       fill_in 'post[date]', with: Date.today
-      fill_in 'post[rationale]', with: "Some rationale"
-      fill_in 'post[overtime_request]', with: 4.5
+      fill_in 'post[work_performed]', with: "Some work_performed"
+      fill_in 'post[daily_hours]', with: 4.5
 
       expect { click_on "Save" }.to change(Post, :count).by(1)
     end
 
     it 'will have a user associated' do
       fill_in 'post[date]', with: Date.today
-      fill_in 'post[rationale]', with: "User_Association"
-      fill_in 'post[overtime_request]', with: 4.5
+      fill_in 'post[work_performed]', with: "User_Association"
+      fill_in 'post[daily_hours]', with: 4.5
       click_on "Save"
 
-      expect(User.last.posts.last.rationale).to eq("User_Association")
+      expect(User.last.posts.last.work_performed).to eq("User_Association")
     end
   end
 
@@ -98,10 +102,10 @@ describe 'navigate' do
       visit edit_post_path(post)
 
       fill_in 'post[date]', with: Date.today
-      fill_in 'post[rationale]', with: "Edited content"
+      fill_in 'post[work_performed]', with: "Edited content"
       click_on "Save"
 
-      expect(User.last.posts.last.rationale).to eq("Edited content")
+      expect(User.last.posts.last.work_performed).to eq("Edited content")
     end
 
     it "cannot be edited by non authorized user" do

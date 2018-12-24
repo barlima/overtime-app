@@ -38,11 +38,43 @@ RSpec.describe User, type: :model do
       @user.phone = '12345678901'
       expect(@user).to_not be_valid
     end
+
+    it "requires the ssn attr" do
+      @user.ssn = nil
+      expect(@user).to_not be_valid
+    end
+
+    it "requires the company" do
+      @user.company = nil
+      expect(@user).to_not be_valid
+    end
+
+    it "requires the ssn attr to only contain integers" do
+      @user.ssn = 'Mygr'
+      expect(@user).to_not be_valid
+    end
+
+    it "requires the ssn attr to only have 4 chars" do
+      @user.ssn = '12345'
+      expect(@user).to_not be_valid
+    end
   end
 
   describe "custome name methods" do
     it "has a full name method that combains first and last name" do
       expect(@user.full_name).to eq("SNOW, JOHN")
+    end
+  end
+
+  describe 'retationship between admins and employees' do
+    it 'allows for admins to be associatet with multiple employees' do
+      employee1 = FactoryBot.create(:user)
+      employee2 = FactoryBot.create(:user)
+      admin = FactoryBot.create(:admin_user)
+      Hand.create!(user_id: admin.id, hand_id: employee1.id)
+      Hand.create!(user_id: admin.id, hand_id: employee2.id)
+
+      expect(admin.hands.count).to eq(2)
     end
   end
 end
